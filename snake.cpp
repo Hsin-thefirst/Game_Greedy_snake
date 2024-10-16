@@ -11,10 +11,12 @@ int randint(int n, int m)
 {
     time_t t;
     srand((unsigned) time(&t)); 
-    if (rand() % m <= n)
+    if (rand() % m +1 <= n)
     return n;
+    else if (rand() % m + 1 >= m)
+    return m;
     else
-    return rand() % m;
+    return (rand() % m + 1);
 }
 
 struct snakee
@@ -32,8 +34,8 @@ struct snakee
 
 struct foodd
 {
-    int pos_x = randint(1, 18);
-    int pos_y = randint(1, 8);
+    int pos_x = randint(3, 17);
+    int pos_y = randint(3, 7);
     char shape = 'Q';
 }food;
 
@@ -52,7 +54,7 @@ struct mapp
      "|                  |\n",
      "|                  |\n",
      "|                  |\n",
-     "--------------------"  //\033[A\r\033[A\r\033[A\r\033[A\r\033[A\r\033[A\r\033[A\r\033[A\r\033[A\r
+     "--------------------\n"  //\033[A\r\033[A\r\033[A\r\033[A\r\033[A\r\033[A\r\033[A\r\033[A\r\033[A\r
      };
 }map;
 
@@ -113,17 +115,19 @@ void change_direction(char temp)
 
 void get_food(std::vector<std::vector<int>> & body)
 {
-    if (snake.pos_x == food.pos_x && snake.pos_y == food.pos_y)
+    for (int i = 0; i < snake.body.size(); i++)
+    {    
+        if (snake.body[i][1] == food.pos_x && snake.body[i][0] == food.pos_y)
     {
         // body plus one 
         int new_pos_y = body[body.size()-1][0] - (body[body.size() -2][0] - body[body.size()-1][0]);
         int new_pos_x = body[body.size()-1][1] - (body[body.size() -2][1] - body[body.size()-1][1]);
         body.push_back({new_pos_y,new_pos_x});
-        food.pos_x = randint(1, 18);
-        food.pos_y = randint(1, 8);
+        food.pos_x = randint(2, 17);
+        food.pos_y = randint(2, 7);
         //food refresh
         map.shape[food.pos_y][food.pos_x] = food.shape;
-    }
+    }}
 }
 bool if_break()
 {
@@ -138,8 +142,8 @@ bool if_break()
 }
 int main()
 {   
-    std::cout <<"This is Greedy Snake 1.0 !\nIf you have any advice or bugs to report, PLZ contact me\nCopytight: Hsin(Do NOT use it for business porpose)";
-    std::cout <<"\nRules :\npress w to turn up, a to turn left, d to turn right, s to turn down\n(Press any to start)";
+    std::cout <<"This is Greedy Snake 1.1 !\nIf you have any advice or bugs to report, PLZ contact me\nCopytight: Hsin(Do NOT use it for business porpose)";
+    std::cout <<"\nRules :\npress w to turn up, a to turn left, d to turn right, s to turn down\n(Press any to start)\n\n\n\n\n\nUpdate journal\n------------\n1.1\nfix the bug that the food sometimes gets in the wall;\nfix the bug that the food will disappear if it gets refreshed in the snake's body;\nyou can see your scores now;\nacknowledgement:TS1989-jpg, who discovered a bug in 1.0";
     std::cin.get();
     LOOP:using namespace std;
     bool judge = true;
@@ -188,7 +192,7 @@ int main()
         // delay for 1 sec
         sleep(1);
     } 
-    cout << "GAME OVER"<< endl<< "Would you want to try again?(y/n):"<< endl;
+    cout << "GAME OVER"<< endl<< "Your scores: "<< snake.body.size() - 2<< endl<<"Would you want to try again?(y/n):"<< endl;
     char ans;
     cin >> ans;
     if (ans == 'y')
@@ -208,7 +212,7 @@ int main()
      "|                  |\n",
      "|                  |\n",
      "|                  |\n",
-     "--------------------"  //\033[A\r\033[A\r\033[A\r\033[A\r\033[A\r\033[A\r\033[A\r\033[A\r\033[A\r
+     "--------------------\n"  //\033[A\r\033[A\r\033[A\r\033[A\r\033[A\r\033[A\r\033[A\r\033[A\r\033[A\r
      };
     goto LOOP;}
     else if (ans == 'n')
